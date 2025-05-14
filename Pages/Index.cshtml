@@ -1,5 +1,15 @@
 ﻿@page
 @model IndexModel
+@inject SignInManager<IdentityUser> SignInManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <p>Welcome back, @User.Identity?.Name!</p>
+}
+else
+{
+    <p>Please sign in to access more features.</p>
+}
 @{
     ViewData["Title"] = "Home page";
 }
