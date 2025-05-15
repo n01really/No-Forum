@@ -9,4 +9,5 @@ public class ApplicationDbContext : IdentityDbContext
         : base(options)
     {
     }
+    public DbSet <No_Forum.Models.Forumpages> Forumpages { get; set; }
 }
