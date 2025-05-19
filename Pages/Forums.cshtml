@@ -1,0 +1,48 @@
+﻿@page
+@model No_Forum.Pages.ForumsModel
+@{
+    ViewData["Title"] = "Alla Forum Pages";
+}
+
+<h2>All Forum Pages</h2>
+
+@if (Model.ForumPages.Count==0)
+{
+    <p>No forum pages available.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Taggar</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pages in Model.ForumPages)
+            {
+                <tr>
+                    <td><a asp-page="/ContentPage" asp-route-id="@pages.Id">@pages.Title</a></td>
+                    <td>@pages.Description</td>
+                    <td>
+                        @{
+                            var tags = new List<string>();
+                            if (pages.Political) { tags.Add("Political"); }
+                            if (pages.NSFW) { tags.Add("NSFW"); }
+                            if (pages.Roleplay) { tags.Add("Roleplay"); }
+                            if (pages.Discussion) { tags.Add("Discussion"); }
+                            if (pages.Meme) { tags.Add("Meme"); }
+                            if (pages.Art) { tags.Add("Art"); }
+                            if (pages.Technology) { tags.Add("Technology"); }
+                        }
+                        @string.Join(", ", tags)
+                    </td>
+                    <td>@pages.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
