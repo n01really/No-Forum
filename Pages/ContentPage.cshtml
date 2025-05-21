@@ -1,4 +1,52 @@
 ﻿@page "{id:int}"
 @model No_Forum.Pages.ContentPageModel
 @{
+    ViewData["Title"] = Model.ForumPage?.Title ?? "Forum Page";
+    var showForm = Request.Method == "POST" || !string.IsNullOrEmpty(Request.Query["showForm"]);
+}
+@if (!showForm)
+{
+    <form method="get" style="position: fixed; bottom: 32px; right: 32px; z-index: 1000;">
+        <button type="submit" name="showForm" value="1" class="btn btn-success mb-3 shadow">
+            Add New Post
+        </button>
+    </form>
+}
+else
+{
+    <form method="post">
+        <div class="form-group">
+            <textarea asp-for="NewPostText" class="form-control" rows="3" placeholder="Write your post here..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Post</button>
+        <a href="@Url.Page(null, new { id = Model.ForumId })" class="btn btn-secondary mt-2 ms-2">Cancel</a>
+    </form>
+}
+
+<h2>@Model.ForumPage?.Title</h2>
+<p>@Model.ForumPage?.Description</p>
+
+<hr />
+
+<h3>Posts</h3>
+@if (Model.ForumPosts.Count == 0)
+{
+    <p>No posts yet.</p>
+}
+else
+{
+    <ul class="list-group">
+        @foreach (var post in Model.ForumPosts)
+        {
+            <li class="list-group-item mb-2">
+                <div>
+                    <strong>@(post.CreatedBy ?? "Anonymous")</strong>
+                    <span class="text-muted" style="font-size:small;">
+                        @post.CreatedAt.ToLocalTime().ToString("g")
+                    </span>
+                </div>
+                <div>@post.Text</div>
+            </li>
+        }
+    </ul>
 }

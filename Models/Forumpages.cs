@@ -7,6 +7,7 @@
         public string Description { get; set; } = default!;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public string? CreatedBy { get; set; }
+        public int PostsCount { get; set; } = 0;
 
         public bool Political { get; set; }
 
