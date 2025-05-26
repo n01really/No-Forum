@@ -1,0 +1,33 @@
+﻿@page "{id:int}"
+@model No_Forum.Pages.ContentPageViewerModel
+@{
+}
+
+<p>@Model.Post?.Text</p>
+
+<h3>Comments</h3>
+@if (Model.PostComments != null && Model.PostComments.Any())
+{
+    <ul>
+        @foreach (var comment in Model.PostComments)
+        {
+            <li>
+                <strong>@(comment.CreatedBy ?? "Anonymous")</strong>
+                <span class="text-muted" style="font-size:small;">
+                    @comment.CreatedAt.ToLocalTime()
+                </span>
+                <div>@comment.Text</div>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No comments yet.</p>
+}
+
+<form method="post">
+    <textarea asp-for="NewCommentText" rows="3" cols="50"></textarea>
+    <br />
+    <button type="submit">Add Comment</button>
+</form>

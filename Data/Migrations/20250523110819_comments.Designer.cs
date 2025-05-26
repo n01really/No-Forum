@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using No_Forum.Data;
 
@@ -11,9 +12,11 @@ using No_Forum.Data;
 namespace No_Forum.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250523110819_comments")]
+    partial class comments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -224,7 +227,7 @@ namespace No_Forum.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("No_Forum.Models.Comments", b =>
+            modelBuilder.Entity("No_Forum.Models.Coments", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -241,7 +244,10 @@ namespace No_Forum.Data.Migrations
                     b.Property<int>("ForumpageId")
                         .HasColumnType("int");
 
-                    b.Property<int>("PostsId")
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PostsId")
                         .HasColumnType("int");
 
                     b.Property<string>("Text")
@@ -250,7 +256,9 @@ namespace No_Forum.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Comments");
+                    b.HasIndex("PostsId");
+
+                    b.ToTable("Coments");
                 });
 
             modelBuilder.Entity("No_Forum.Models.Forumpages", b =>
@@ -379,6 +387,18 @@ namespace No_Forum.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("No_Forum.Models.Coments", b =>
+                {
+                    b.HasOne("No_Forum.Models.Posts", null)
+                        .WithMany("Coments")
+                        .HasForeignKey("PostsId");
+                });
+
+            modelBuilder.Entity("No_Forum.Models.Posts", b =>
+                {
+                    b.Navigation("Coments");
                 });
 #pragma warning restore 612, 618
         }

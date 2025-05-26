@@ -28,7 +28,8 @@ namespace No_Forum.Pages
         {
             ForumId = id;
             ForumPage = _context.Forumpages.FirstOrDefault(f => f.Id == id);
-            ForumPosts = _context.Posts.Where(p => p.ForumpageId == id).ToList(); // Corrected property name
+            ForumPosts = _context.Posts.Where(p => p.ForumpageId == id).ToList();
+
         }
         public IActionResult OnPost(int id)
         {
@@ -37,7 +38,7 @@ namespace No_Forum.Pages
             {
                 var post = new Posts
                 {
-                    ForumpageId = id, // Corrected property name
+                    ForumpageId = id, 
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = User.Identity?.Name,
                     Text = NewPostText
@@ -50,6 +51,10 @@ namespace No_Forum.Pages
             ForumPosts = _context.Posts.Where(p => p.ForumpageId == id).ToList(); // Corrected property name
             NewPostText = string.Empty;
             return Page();
+
         }
+       
+
+
     }
 }

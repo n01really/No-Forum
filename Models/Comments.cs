@@ -1,12 +1,12 @@
 ﻿namespace No_Forum.Models
 {
-    public class Coments
+    public class Comments
     {
         public int Id { get; set; }
+        public int PostsId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public string? CreatedBy { get; set; }
         public string Text { get; set; } = default!;
-        public int PostId { get; set; }
         public int ForumpageId { get; set; }
     }
 }

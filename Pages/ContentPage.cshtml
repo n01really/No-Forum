@@ -45,8 +45,15 @@ else
                         @post.CreatedAt.ToLocalTime().ToString("g")
                     </span>
                 </div>
-                <div>@post.Text</div>
+                <div>
+                    <a asp-page="/ContentPageViewer" asp-route-id="@post.Id" class="text-decoration-none">
+                        @post.Text
+                    </a>
+                </div>
+       
             </li>
         }
     </ul>
 }
+
+
