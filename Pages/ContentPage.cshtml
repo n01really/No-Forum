@@ -14,9 +14,12 @@
 }
 else
 {
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         <div class="form-group">
             <textarea asp-for="NewPostText" class="form-control" rows="3" placeholder="Write your post here..."></textarea>
+        </div>
+        <div class="form-group mt-2">
+            <input type="file" asp-for="NewPostImage" class="form-control" accept="image/*" />
         </div>
         <button type="submit" class="btn btn-primary mt-2">Post</button>
         <a href="@Url.Page(null, new { id = Model.ForumId })" class="btn btn-secondary mt-2 ms-2">Cancel</a>
@@ -42,6 +45,7 @@ else
                 <div>
                     <strong>@(post.CreatedBy ?? "Anonymous")</strong>
                     <span class="text-muted" style="font-size:small;">
+
                         @post.CreatedAt.ToLocalTime().ToString("g")
                     </span>
                 </div>
@@ -50,6 +54,14 @@ else
                         @post.Text
                     </a>
                 </div>
+                @if (!string.IsNullOrEmpty(post.ImagePath))
+                {
+                    <div class="mt-2">
+                        <a asp-page="/ContentPageViewer" asp-route-id="@post.Id">
+                            <img src="@post.ImagePath" alt="Post Image" style="max-width: 300px; max-height: 300px;" class="img-fluid rounded" />
+                        </a>
+                    </div>
+                }
        
             </li>
         }

@@ -6,9 +6,9 @@
         
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public string? CreatedBy { get; set; }
-        public string Text { get; set; } = default!;
+        public string? Text { get; set; } = default!;
         public int ForumpageId { get; set; }
+        public string? ImagePath { get; set; }
 
-        
     }
 }

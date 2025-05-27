@@ -4,6 +4,10 @@
 }
 
 <p>@Model.Post?.Text</p>
+@if (!string.IsNullOrEmpty(Model.Post?.ImagePath))
+{
+    <img src="@Model.Post.ImagePath" alt="Post image" style="max-width:100%; height:auto;" />
+}
 
 <h3>Comments</h3>
 @if (Model.PostComments != null && Model.PostComments.Any())
