@@ -11,6 +11,7 @@ public class IndexModel : PageModel
     {
         _logger = logger;
     }
+    public string ReciverId { get; set; }
 
     public void OnGet()
     {

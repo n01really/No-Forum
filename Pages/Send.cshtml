@@ -1,0 +1,21 @@
+﻿@page
+@model No_Forum.Pages.SendModel
+@{
+    ViewData["Title"] = "Send Message";
+}
+<h2>Send Direct Message</h2>
+<form method="post">
+    <input type="hidden" asp-for="ReciverId" />
+    <div class="form-group mt-2">
+        <label asp-for="Message">Message</label>
+        <textarea asp-for="Message" class="form-control"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Send</button>
+</form>
+@if (Model.Success)
+{
+    <div class="alert alert-success mt-2">Message sent!</div>
+}
+
+        
+

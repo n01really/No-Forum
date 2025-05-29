@@ -1,0 +1,37 @@
+﻿@page
+@model No_Forum.Pages.ConversationsModel
+@{
+    ViewData["Title"] = "Your Conversations";
+}
+
+<h2>Your Conversations</h2>
+@if (Model.Conversations != null && Model.Conversations.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Sender</th>
+                <th>Last Message</th>
+                <th>Date</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var convo in Model.Conversations)
+        {
+            <tr>
+                <td>@convo.SenderName</td>
+                <td>@convo.Message</td>
+                <td>@convo.CreatedAt.ToString("g")</td>
+                <td>
+                    <a asp-page="/Message" asp-route-id="@convo.Id" class="btn btn-sm btn-primary">View</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else
+{
+    <div>No conversations found.</div>
+}

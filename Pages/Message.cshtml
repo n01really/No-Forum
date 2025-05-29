@@ -1,0 +1,26 @@
+﻿@page "{id:int}"
+@model No_Forum.Pages.MessageModel
+@{
+    ViewData["Title"] = "Message";
+}
+
+@if (Model.MessageDetail != null)
+{
+    <div class="card mt-4">
+        <div class="card-header">
+            <strong>From:</strong> @Model.MessageDetail.SenderName
+            <span class="text-muted float-end" style="font-size:small;">
+                @Model.MessageDetail.CreatedAt.ToString("g")
+            </span>
+        </div>
+        <div class="card-body">
+            <p>@Model.MessageDetail.Message</p>
+        </div>
+    </div>
+    <a asp-page="/Send" asp-route-ReciverId="@Model.MessageDetail.SenderId" class="btn btn-primary mt-3">Reply</a>
+
+}
+else
+{
+    <div class="alert alert-warning mt-4">Message not found.</div>
+}

@@ -44,6 +44,12 @@ else
             <li class="list-group-item mb-2">
                 <div>
                     <strong>@(post.CreatedBy ?? "Anonymous")</strong>
+                    @if (!string.IsNullOrEmpty(post.CreatedBy) && post.CreatedBy != User.Identity?.Name)
+                    {
+                        <a asp-page="/Send" asp-route-ReciverId="@post.CreatedBy" class="ms-2 btn btn-link btn-sm p-0">
+                            Send DM
+                        </a>
+                    }
                     <span class="text-muted" style="font-size:small;">
 
                         @post.CreatedAt.ToLocalTime().ToString("g")

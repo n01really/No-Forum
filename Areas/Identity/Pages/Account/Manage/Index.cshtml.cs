@@ -9,20 +9,25 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using No_Forum.Data;
+using No_Forum.Models;
 
 namespace No_Forum.Areas.Identity.Pages.Account.Manage
 {
     public class IndexModel : PageModel
     {
+        private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
 
         public IndexModel(
             UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
+            SignInManager<IdentityUser> signInManager,
+             ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _context = context;
         }
 
         /// <summary>
@@ -30,6 +35,7 @@ namespace No_Forum.Areas.Identity.Pages.Account.Manage
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
         /// 
+        public IList<DM> ReceivedDMs { get; set; } = new List<DM>();
 
         [BindProperty]
         [Required]
@@ -55,6 +61,11 @@ namespace No_Forum.Areas.Identity.Pages.Account.Manage
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
+        [BindProperty]
+        public string ReplyMessage { get; set; }
+
+        [BindProperty]
+        public string ReplyRecipient { get; set; }
         public class InputModel
         {
             /// <summary>
@@ -77,6 +88,7 @@ namespace No_Forum.Areas.Identity.Pages.Account.Manage
             {
                 PhoneNumber = phoneNumber
             };
+
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -86,6 +98,7 @@ namespace No_Forum.Areas.Identity.Pages.Account.Manage
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
+
 
             Username = user.UserName;
 
