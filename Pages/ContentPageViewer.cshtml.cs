@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace No_Forum.Pages
 {
@@ -22,6 +23,7 @@ namespace No_Forum.Pages
         }
 
         public List<IdentityUser> AllUsers { get; set; } = new();
+        public List<PFP> AllPFPs { get; set; }
         public List<Friends> MyFriends { get; set; } = new();
 
         [BindProperty(SupportsGet = true)]
@@ -44,7 +46,8 @@ namespace No_Forum.Pages
             if (Post == null)
                 return NotFound();
 
-            PostComments = _context.Comments.Where(c => c.PostsId == id).ToList(); 
+            PostComments = _context.Comments.Where(c => c.PostsId == id).ToList();
+            AllPFPs = await _context.PFPs.ToListAsync();
             return Page();
         }
         public async Task<IActionResult> OnPostAddFriendAsync(string friendUserId)

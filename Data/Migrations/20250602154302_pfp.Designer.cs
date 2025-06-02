@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using No_Forum.Data;
 
@@ -11,9 +12,11 @@ using No_Forum.Data;
 namespace No_Forum.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250602154302_pfp")]
+    partial class pfp
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -250,7 +253,7 @@ namespace No_Forum.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("No_Forum.Models.DM", b =>
@@ -280,7 +283,7 @@ namespace No_Forum.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DM", (string)null);
+                    b.ToTable("DM");
                 });
 
             modelBuilder.Entity("No_Forum.Models.Forumpages", b =>
@@ -331,7 +334,7 @@ namespace No_Forum.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Forumpages", (string)null);
+                    b.ToTable("Forumpages");
                 });
 
             modelBuilder.Entity("No_Forum.Models.Friends", b =>
@@ -355,7 +358,7 @@ namespace No_Forum.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Friends", (string)null);
+                    b.ToTable("Friends");
                 });
 
             modelBuilder.Entity("No_Forum.Models.PFP", b =>
@@ -376,7 +379,7 @@ namespace No_Forum.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PFPs", (string)null);
+                    b.ToTable("PFPs");
                 });
 
             modelBuilder.Entity("No_Forum.Models.Posts", b =>
@@ -404,7 +407,7 @@ namespace No_Forum.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

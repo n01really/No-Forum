@@ -1,10 +1,14 @@
 ﻿@page "{id:int}"
+@using Microsoft.AspNetCore.Identity
+
+@using No_Forum.Models // Replace with the actual namespace for ApplicationUser
 @model No_Forum.Pages.ContentPageViewerModel
 @{
     var currentUserId = User.Identity?.IsAuthenticated == true
         ? Model.AllUsers.FirstOrDefault(u => u.UserName == User.Identity.Name)?.Id
         : null;
 }
+
 
 <p>@Model.Post?.Text</p>
 @if (!string.IsNullOrEmpty(Model.Post?.ImagePath))
@@ -20,10 +24,17 @@
         {
             var commenter = Model.AllUsers.FirstOrDefault(u => u.UserName == comment.CreatedBy);
             var commenterId = commenter?.Id;
+            var pfp = commenterId != null
+            ? Model.AllPFPs.FirstOrDefault(p => p.UserId == commenterId)
+            : null;
+            var pfpPath = pfp != null
+            ? Url.Content($"~/img/{pfp.ProfilePicturePath}")
+            : Url.Content("~/img/default.png");
             var alreadyFriend = commenterId != null && Model.MyFriends.Any(f => f.FriendUserId == commenterId);
             var isSelf = commenterId == currentUserId;
 
             <li>
+                <img src="@pfpPath" alt="Profile Picture" style="width:32px;height:32px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:8px;" />
                 <strong>@(comment.CreatedBy ?? "Anonymous")</strong>
                 @if (User.Identity?.IsAuthenticated == true && commenterId != null && !alreadyFriend && !isSelf)
                 {

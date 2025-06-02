@@ -14,4 +14,5 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<No_Forum.Models.Comments> Comments { get; set; }
     public DbSet<No_Forum.Models.DM> DM { get; set; }
     public DbSet<No_Forum.Models.Friends> Friends { get; set; }
+    public DbSet<No_Forum.Models.PFP> PFPs { get; set; }
 }
