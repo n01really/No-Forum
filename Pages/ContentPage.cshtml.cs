@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -12,13 +13,16 @@ namespace No_Forum.Pages
     public class ContentPageModel : PageModel
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public ContentPageModel(ApplicationDbContext context)
+        public ContentPageModel(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
         public Forumpages? ForumPage { get; set; }
         public List<Posts> ForumPosts { get; set; } = new();
+        public Dictionary<string, IdentityUser> PostAuthors { get; set; } = new();
 
         [BindProperty]
         public string NewPostText { get; set; } = string.Empty;
@@ -31,31 +35,19 @@ namespace No_Forum.Pages
             ForumId = id;
             ForumPage = _context.Forumpages.FirstOrDefault(f => f.Id == id);
             ForumPosts = _context.Posts.Where(p => p.ForumpageId == id).ToList();
-            
 
+            var userIds = ForumPosts
+            .Where(p => !string.IsNullOrEmpty(p.CreatedBy))
+            .Select(p => p.CreatedBy)
+            .Distinct()
+            .ToList();
+
+            PostAuthors = userIds
+                .Select(uid => _userManager.FindByIdAsync(uid).Result)
+                .Where(u => u != null)
+                .ToDictionary(u => u.Id, u => u);
         }
-        //public IActionResult OnPost(int id)
-        //{
-        //    ForumId = id;
-        //    if (!string.IsNullOrWhiteSpace(NewPostText))
-        //    {
-        //        var post = new Posts
-        //        {
-        //            ForumpageId = id, 
-        //            CreatedAt = DateTime.UtcNow,
-        //            CreatedBy = User.Identity?.Name,
-        //            Text = NewPostText
-        //        };
-        //        _context.Posts.Add(post);
-        //        _context.SaveChanges();
-        //    }
 
-        //    ForumPage = _context.Forumpages.FirstOrDefault(f => f.Id == id);
-        //    ForumPosts = _context.Posts.Where(p => p.ForumpageId == id).ToList(); // Corrected property name
-        //    NewPostText = string.Empty;
-        //    return Page();
-
-        //}
         public async Task<IActionResult> OnPostAsync(int id)
         {
             ForumId = id;
@@ -90,7 +82,7 @@ namespace No_Forum.Pages
                 ForumpageId = ForumId,
                 Text = NewPostText,
                 CreatedAt = DateTime.UtcNow,
-                CreatedBy = User.Identity?.Name,
+                CreatedBy = _userManager.GetUserId(User),
                 ImagePath = imagePath
             };
 

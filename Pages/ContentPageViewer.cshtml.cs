@@ -6,17 +6,23 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 
 namespace No_Forum.Pages
 {
     public class ContentPageViewerModel : PageModel
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public ContentPageViewerModel(ApplicationDbContext context)
+        public ContentPageViewerModel(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
+
+        public List<IdentityUser> AllUsers { get; set; } = new();
+        public List<Friends> MyFriends { get; set; } = new();
 
         [BindProperty(SupportsGet = true)]
         public int Id { get; set; }
@@ -29,6 +35,11 @@ namespace No_Forum.Pages
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
+
+            var currentUserId = _userManager.GetUserId(User);
+            AllUsers = await Task.Run(() => _context.Users.Where(u => u.Id != currentUserId).ToList());
+            MyFriends = await Task.Run(() => _context.Friends.Where(f => f.UserId == currentUserId).ToList());
+        
             Post = await _context.Posts.FindAsync(id); 
             if (Post == null)
                 return NotFound();
@@ -36,7 +47,27 @@ namespace No_Forum.Pages
             PostComments = _context.Comments.Where(c => c.PostsId == id).ToList(); 
             return Page();
         }
+        public async Task<IActionResult> OnPostAddFriendAsync(string friendUserId)
+        {
+            var currentUserId = _userManager.GetUserId(User);
 
+            // Prevent duplicate friendships
+            var alreadyFriend = await Task.Run(() =>
+                _context.Friends.Any(f => f.UserId == currentUserId && f.FriendUserId == friendUserId)
+            );
+
+            if (!alreadyFriend)
+            {
+                var friend = new Friends
+                {
+                    UserId = currentUserId,
+                    FriendUserId = friendUserId
+                };
+                _context.Friends.Add(friend);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToPage();
+        }
         public async Task<IActionResult> OnPostAsync()
         {
             if (string.IsNullOrWhiteSpace(NewCommentText))

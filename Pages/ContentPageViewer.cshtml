@@ -1,6 +1,9 @@
 ﻿@page "{id:int}"
 @model No_Forum.Pages.ContentPageViewerModel
 @{
+    var currentUserId = User.Identity?.IsAuthenticated == true
+        ? Model.AllUsers.FirstOrDefault(u => u.UserName == User.Identity.Name)?.Id
+        : null;
 }
 
 <p>@Model.Post?.Text</p>
@@ -15,8 +18,20 @@
     <ul>
         @foreach (var comment in Model.PostComments)
         {
+            var commenter = Model.AllUsers.FirstOrDefault(u => u.UserName == comment.CreatedBy);
+            var commenterId = commenter?.Id;
+            var alreadyFriend = commenterId != null && Model.MyFriends.Any(f => f.FriendUserId == commenterId);
+            var isSelf = commenterId == currentUserId;
+
             <li>
                 <strong>@(comment.CreatedBy ?? "Anonymous")</strong>
+                @if (User.Identity?.IsAuthenticated == true && commenterId != null && !alreadyFriend && !isSelf)
+                {
+                    <form method="post" asp-page-handler="AddFriend" style="display:inline;">
+                        <input type="hidden" name="friendUserId" value="@commenterId" />
+                        <button type="submit" class="btn btn-link btn-sm">Follow</button>
+                    </form>
+                }
                 <span class="text-muted" style="font-size:small;">
                     @comment.CreatedAt.ToLocalTime()
                 </span>

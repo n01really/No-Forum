@@ -21,19 +21,15 @@ namespace No_Forum.Pages
 
         public async Task OnGetAsync()
         {
-            var userId = _userManager.GetUserId(User);
+            var user = await _userManager.GetUserAsync(User);
+            var userName = user?.UserName;
+            var userId = user?.Id;
 
-            // Get all messages where the user is either sender or receiver
-            var allMessages = await _context.DM
-                .Where(dm => dm.SenderId == userId || dm.ReciverId == userId)
-                .ToListAsync();
-
-            // Group by the other participant (not the current user)
-            Conversations = allMessages
-                .GroupBy(dm => dm.SenderId == userId ? dm.ReciverId : dm.SenderId)
-                .Select(g => g.OrderByDescending(dm => dm.CreatedAt).First())
+            // Get all messages where the user is the receiver (by userName or userId)
+            Conversations = await _context.DM
+                .Where(dm => dm.ReciverId == userName || dm.ReciverId == userId)
                 .OrderByDescending(dm => dm.CreatedAt)
-                .ToList();
+                .ToListAsync();
         }
     }
 }

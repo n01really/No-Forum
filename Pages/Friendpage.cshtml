@@ -1,0 +1,22 @@
+﻿@page
+@model No_Forum.Pages.FriendpageModel
+@{
+}
+
+<h2>Your Follows</h2>
+@if (!Model.FriendsList.Any())
+{
+    <p>You dont follow annyone yet.</p>
+}
+else
+{
+    <ul>
+    @foreach (var friend in Model.FriendsList)
+    {
+        <li>
+            @friend.UserName
+            <a asp-page="/DM" asp-route-userId="@friend.Id">Send DM</a>
+        </li>
+    }
+    </ul>
+}

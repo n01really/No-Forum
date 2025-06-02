@@ -17,7 +17,8 @@
             <p>@Model.MessageDetail.Message</p>
         </div>
     </div>
-    <a asp-page="/Send" asp-route-ReciverId="@Model.MessageDetail.SenderId" class="btn btn-primary mt-3">Reply</a>
+    <a asp-page="/Send" asp-route-reciverId="@Model.MessageDetail.SenderId" class="btn btn-primary mt-3">Send DM</a>
+
 
 }
 else

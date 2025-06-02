@@ -35,6 +35,35 @@ else
 @if (Model.ForumPosts.Count == 0)
 {
     <p>No posts yet.</p>
+    @foreach (var post in Model.ForumPosts)
+    {
+        var user = Model.PostAuthors.ContainsKey(post.CreatedBy) ? Model.PostAuthors[post.CreatedBy] : null;
+        <li class="list-group-item mb-2">
+            <div>
+                <strong>@(user?.UserName ?? "Anonymous")</strong>
+                @if (user != null && user.Id != User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
+                {
+                    <a asp-page="/Send" asp-route-reciverId="@user.Id" class="btn btn-primary mt-3">Send DM</a>
+                }
+                <span class="text-muted" style="font-size:small;">
+                    @post.CreatedAt.ToLocalTime().ToString("g")
+                </span>
+            </div>
+            <div>
+                <a asp-page="/ContentPageViewer" asp-route-id="@post.Id" class="text-decoration-none">
+                    @post.Text
+                </a>
+            </div>
+            @if (!string.IsNullOrEmpty(post.ImagePath))
+            {
+                <div class="mt-2">
+                    <a asp-page="/ContentPageViewer" asp-route-id="@post.Id">
+                        <img src="@post.ImagePath" alt="Post Image" style="max-width: 300px; max-height: 300px;" class="img-fluid rounded" />
+                    </a>
+                </div>
+            }
+        </li>
+    }
 }
 else
 {
@@ -46,9 +75,9 @@ else
                     <strong>@(post.CreatedBy ?? "Anonymous")</strong>
                     @if (!string.IsNullOrEmpty(post.CreatedBy) && post.CreatedBy != User.Identity?.Name)
                     {
-                        <a asp-page="/Send" asp-route-ReciverId="@post.CreatedBy" class="ms-2 btn btn-link btn-sm p-0">
-                            Send DM
-                        </a>
+                        <a asp-page="/Send" asp-route-reciverId="@post.CreatedBy" class="btn btn-primary mt-3">Send DM</a>
+
+
                     }
                     <span class="text-muted" style="font-size:small;">
 

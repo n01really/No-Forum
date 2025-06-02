@@ -20,8 +20,6 @@ namespace No_Forum.Pages
             _userManager = userManager;
         }
 
-
-
         [BindProperty]
         public string ReciverId { get; set; }
 
@@ -30,14 +28,12 @@ namespace No_Forum.Pages
 
         public bool Success { get; set; }
 
-        public async Task OnGetAsync(string ReciverId) 
+        public async Task OnGetAsync(string reciverId)
         {
-            var currentUserId = _userManager.GetUserId(User);
-            if (!string.IsNullOrEmpty(ReciverId))
+            if (!string.IsNullOrEmpty(reciverId))
             {
-                this.ReciverId = ReciverId;
+                this.ReciverId = reciverId;
             }
-
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -46,7 +42,19 @@ namespace No_Forum.Pages
                 return Page();
 
             var senderId = _userManager.GetUserId(User);
-            
+
+            // Find the recipient user by email or ID
+            var recipient = await _userManager.FindByEmailAsync(ReciverId);
+            if (recipient == null)
+            {
+                recipient = await _userManager.FindByIdAsync(ReciverId);
+            }
+            if (recipient == null)
+            {
+                ModelState.AddModelError(string.Empty, "Recipient not found.");
+                return Page();
+            }
+
             var dm = new DM
             {
                 SenderId = senderId,
@@ -55,7 +63,6 @@ namespace No_Forum.Pages
                 CreatedAt = DateTime.UtcNow,
                 SenderName = User.Identity?.Name
             };
-
 
             _context.DM.Add(dm);
             await _context.SaveChangesAsync();
