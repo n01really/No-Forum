@@ -1,7 +1,7 @@
 ﻿@page "{id:int}"
 @using Microsoft.AspNetCore.Identity
 
-@using No_Forum.Models // Replace with the actual namespace for ApplicationUser
+@using No_Forum.Models 
 @model No_Forum.Pages.ContentPageViewerModel
 @{
     var currentUserId = User.Identity?.IsAuthenticated == true
@@ -25,16 +25,21 @@
             var commenter = Model.AllUsers.FirstOrDefault(u => u.UserName == comment.CreatedBy);
             var commenterId = commenter?.Id;
             var pfp = commenterId != null
-            ? Model.AllPFPs.FirstOrDefault(p => p.UserId == commenterId)
+            ? Model.AllPFPs.FirstOrDefault(p => p.UserId == commenterId && !string.IsNullOrEmpty(p.ProfilePicturePath))
             : null;
-            var pfpPath = pfp != null
-            ? Url.Content($"~/img/{pfp.ProfilePicturePath}")
-            : Url.Content("~/img/default.png");
+
             var alreadyFriend = commenterId != null && Model.MyFriends.Any(f => f.FriendUserId == commenterId);
             var isSelf = commenterId == currentUserId;
 
             <li>
-                <img src="@pfpPath" alt="Profile Picture" style="width:32px;height:32px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:8px;" />
+                @if (pfp != null && !string.IsNullOrEmpty(pfp.ProfilePicturePath))
+                {
+                    <img src="@Url.Content($"~/img/{pfp.ProfilePicturePath}")" alt="Profile Picture" style="width:32px;height:32px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:8px;" />
+                }
+                else
+                {
+                    <img src="@Url.Content("~/img/default.png")" alt="Profile Picture" style="width:32px;height:32px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:8px;" />
+                }
                 <strong>@(comment.CreatedBy ?? "Anonymous")</strong>
                 @if (User.Identity?.IsAuthenticated == true && commenterId != null && !alreadyFriend && !isSelf)
                 {
@@ -47,6 +52,12 @@
                     @comment.CreatedAt.ToLocalTime()
                 </span>
                 <div>@comment.Text</div>
+                @if (User.IsInRole("Admin"))
+                {
+                    <form method="post" asp-page-handler="RemoveComment" asp-route-id="@comment.Id" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Remove this comment?');">Remove</button>
+                    </form>
+                }
             </li>
         }
     </ul>

@@ -1,6 +1,8 @@
 ﻿@page
+@using Microsoft.AspNetCore.Identity
 @model IndexModel
 @inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
 
 @if (SignInManager.IsSignedIn(User))
 {
@@ -17,10 +19,20 @@ else
 <div class="text-center">
     <div class="container">
         <div class="row">
+            @if (User.IsInRole("Admin"))
+            {
+                <div class="col">
+                <p>Admin</p>
+                <ul>
+                     <li><a asp-page="/CreatePage">Create new page</a></li>
+                     <li><a asp-page="/Admin">User Management</a></li>
+                </ul>
+            </div>
+            }
             <div class="col">
                 <p>Forums</p>
                 <ul>
-                    <li><a asp-page="/CreatePage">Create new page</a></li>
+                    
                     <li><a asp-page="/Forums">Find Page</a></li>
                     <li>Your Pages</li>
                 </ul>

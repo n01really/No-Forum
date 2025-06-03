@@ -30,6 +30,24 @@ namespace No_Forum.Pages
         public int ForumId { get; set; }
         [BindProperty]
         public IFormFile? NewPostImage { get; set; }
+
+        [BindProperty]
+        public int RemoveCommentId { get; set; }
+
+        public async Task<IActionResult> OnPostRemoveCommentAsync(int id)
+        {
+            if (!User.IsInRole("Admin"))
+                return Forbid();
+
+            var comment = await _context.Comments.FindAsync(id);
+            if (comment != null)
+            {
+                _context.Comments.Remove(comment);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToPage(new { id = ForumId });
+        }
+
         public void OnGet(int id)
         {
             ForumId = id;

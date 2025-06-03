@@ -35,6 +35,23 @@ namespace No_Forum.Pages
         [BindProperty]
         public string NewCommentText { get; set; }
 
+        [BindProperty]
+        public int RemoveCommentId { get; set; }
+
+        public async Task<IActionResult> OnPostRemoveCommentAsync(int id)
+        {
+            if (!User.IsInRole("Admin"))
+                return Forbid();
+
+            var comment = await _context.Comments.FindAsync(id);
+            if (comment != null)
+            {
+                _context.Comments.Remove(comment);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToPage(new { id = Post?.Id });
+        }
+
         public async Task<IActionResult> OnGetAsync(int id)
         {
 

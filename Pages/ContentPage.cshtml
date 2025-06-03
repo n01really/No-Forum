@@ -62,6 +62,12 @@ else
                     </a>
                 </div>
             }
+            @if (User.IsInRole("Admin"))
+            {
+                <form method="post" asp-page-handler="Remove Post" asp-route-id="@post.Id" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Remove this Post?');">Remove</button>
+                </form>
+            }
         </li>
     }
 }
@@ -96,6 +102,12 @@ else
                             <img src="@post.ImagePath" alt="Post Image" style="max-width: 300px; max-height: 300px;" class="img-fluid rounded" />
                         </a>
                     </div>
+                }
+                @if (User.IsInRole("Admin"))
+                {
+                    <form method="post" asp-page-handler="Remove Post" asp-route-id="@post.Id" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Remove this Post?');">Remove</button>
+                    </form>
                 }
        
             </li>
