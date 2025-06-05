@@ -62,11 +62,7 @@ else
                     </a>
                 </div>
             }
-            @if (User.IsInRole("Admin"))
-            {
-                <form method="post" asp-page-handler="Remove Post" asp-route-id="@post.Id" style="display:inline;">
-                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Remove this Post?');">Remove</button>
-                </form>
+         
             }
         </li>
     }
@@ -93,6 +89,11 @@ else
                 <div>
                     <a asp-page="/ContentPageViewer" asp-route-id="@post.Id" class="text-decoration-none">
                         @post.Text
+                        <form method="post" asp-page-handler="ToggleFlagged" asp-route-postId="@post.Id">
+                            <button type="submit">
+                                @(post.Flagged ? "Unreport" : "Report")
+                            </button>
+                        </form>
                     </a>
                 </div>
                 @if (!string.IsNullOrEmpty(post.ImagePath))
@@ -103,12 +104,7 @@ else
                         </a>
                     </div>
                 }
-                @if (User.IsInRole("Admin"))
-                {
-                    <form method="post" asp-page-handler="Remove Post" asp-route-id="@post.Id" style="display:inline;">
-                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Remove this Post?');">Remove</button>
-                    </form>
-                }
+      
        
             </li>
         }

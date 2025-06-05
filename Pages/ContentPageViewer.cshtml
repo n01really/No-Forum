@@ -52,12 +52,13 @@
                     @comment.CreatedAt.ToLocalTime()
                 </span>
                 <div>@comment.Text</div>
-                @if (User.IsInRole("Admin"))
-                {
-                    <form method="post" asp-page-handler="RemoveComment" asp-route-id="@comment.Id" style="display:inline;">
-                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Remove this comment?');">Remove</button>
-                    </form>
-                }
+
+                <form method="post" asp-page-handler="ToggleCommentFlagged" asp-route-commentId="@comment.Id" style="display:inline;">
+                    <button type="submit" class="btn btn-link btn-sm">
+                        @(comment.Flagged ? "Unreport" : "Report")
+                    </button>
+                </form>
+
             </li>
         }
     </ul>

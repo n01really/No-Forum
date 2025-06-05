@@ -9,6 +9,7 @@
         public string? Text { get; set; } = default!;
         public int ForumpageId { get; set; }
         public string? ImagePath { get; set; }
+        public bool Flagged { get; set; } = false;
 
     }
 }

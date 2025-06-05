@@ -38,20 +38,18 @@ namespace No_Forum.Pages
         [BindProperty]
         public int RemoveCommentId { get; set; }
 
-        public async Task<IActionResult> OnPostRemoveCommentAsync(int id)
+        public async Task<IActionResult> OnPostToggleCommentFlaggedAsync(int commentId)
         {
-            if (!User.IsInRole("Admin"))
-                return Forbid();
+            var comment = await _context.Comments.FindAsync(commentId);
+            if (comment == null)
+                return NotFound();
 
-            var comment = await _context.Comments.FindAsync(id);
-            if (comment != null)
-            {
-                _context.Comments.Remove(comment);
-                await _context.SaveChangesAsync();
-            }
+            comment.Flagged = !comment.Flagged;
+            await _context.SaveChangesAsync();
+
+            
             return RedirectToPage(new { id = Post?.Id });
         }
-
         public async Task<IActionResult> OnGetAsync(int id)
         {
 

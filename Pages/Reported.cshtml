@@ -1,0 +1,48 @@
+﻿@page
+@model No_Forum.Pages.ReportedModel
+
+<h2>Flagged Posts</h2>
+@if (Model.FlaggedPosts.Any())
+{
+    <ul>
+        @foreach (var post in Model.FlaggedPosts)
+        {
+            <li>
+                <strong>Post #@post.Id:</strong> @post.Text
+                <form method="post" asp-page-handler="DismissPost" asp-route-id="@post.Id" style="display:inline;">
+                    <button type="submit">Dismiss</button>
+                </form>
+                <form method="post" asp-page-handler="RemovePost" asp-route-id="@post.Id" style="display:inline;">
+                    <button type="submit">Remove</button>
+                </form>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No flagged posts.</p>
+}
+
+<h2>Flagged Comments</h2>
+@if (Model.FlaggedComments.Any())
+{
+    <ul>
+        @foreach (var comment in Model.FlaggedComments)
+        {
+            <li>
+                <strong>Comment #@comment.Id:</strong> @comment.Text
+                <form method="post" asp-page-handler="DismissComment" asp-route-id="@comment.Id" style="display:inline;">
+                    <button type="submit">Dismiss</button>
+                </form>
+                <form method="post" asp-page-handler="RemoveComment" asp-route-id="@comment.Id" style="display:inline;">
+                    <button type="submit">Remove</button>
+                </form>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No flagged comments.</p>
+}

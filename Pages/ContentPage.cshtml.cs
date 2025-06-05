@@ -34,19 +34,7 @@ namespace No_Forum.Pages
         [BindProperty]
         public int RemoveCommentId { get; set; }
 
-        public async Task<IActionResult> OnPostRemoveCommentAsync(int id)
-        {
-            if (!User.IsInRole("Admin"))
-                return Forbid();
 
-            var comment = await _context.Comments.FindAsync(id);
-            if (comment != null)
-            {
-                _context.Comments.Remove(comment);
-                await _context.SaveChangesAsync();
-            }
-            return RedirectToPage(new { id = ForumId });
-        }
 
         public void OnGet(int id)
         {
@@ -64,6 +52,17 @@ namespace No_Forum.Pages
                 .Select(uid => _userManager.FindByIdAsync(uid).Result)
                 .Where(u => u != null)
                 .ToDictionary(u => u.Id, u => u);
+        }
+        public async Task<IActionResult> OnPostToggleFlaggedAsync(int postId)
+        {
+            var post = await _context.Posts.FindAsync(postId);
+            if (post == null)
+                return NotFound();
+
+            post.Flagged = !post.Flagged;
+            await _context.SaveChangesAsync();
+
+            return RedirectToPage(new { id = ForumId });
         }
 
         public async Task<IActionResult> OnPostAsync(int id)
