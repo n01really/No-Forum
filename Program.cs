@@ -22,6 +22,11 @@ public class Program
             .AddEntityFrameworkStores<ApplicationDbContext>();
         builder.Services.AddRazorPages();
 
+        builder.Services.AddHttpClient<ForumApiService>(client =>
+        {
+            client.BaseAddress = new Uri("https://localhost:7022/swagger/index.html");
+        });
+
         builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 

@@ -1,4 +1,5 @@
 ﻿@page "{id:int}"
+@inject ForumApiService ForumApi
 @using Microsoft.AspNetCore.Identity
 
 @using No_Forum.Models 
@@ -9,7 +10,36 @@
         : null;
 }
 
+<style>
+    .ad-side {
+        width: 160px;
+        min-height: 600px;
+        margin: 0 10px;
+        position: sticky;
+        top: 20px;
+    }
 
+    .ad-img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+
+    .main-content {
+        flex: 1;
+    }
+
+    .ad-row {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+    }
+</style>
+
+<div class="ad-row">
+    <div class="ad-side" id="ad-left"></div>
+    <div class="main-content">
 <p>@Model.Post?.Text</p>
 @if (!string.IsNullOrEmpty(Model.Post?.ImagePath))
 {
@@ -73,3 +103,31 @@ else
     <br />
     <button type="submit">Add Comment</button>
 </form>
+    </div>
+    <div class="ad-side" id="ad-right"></div>
+</div>
+        @section Scripts {
+            <script>
+                async function loadAdImages() {
+                    const apiUrl = 'https://localhost:7022/api/Images/random';
+                    try {
+                        const [leftRes, rightRes] = await Promise.all([
+                            fetch(apiUrl),
+                            fetch(apiUrl)
+                        ]);
+                        // Parse as JSON, not text
+                        const leftImg = await leftRes.json();
+                        const rightImg = await rightRes.json();
+
+                        document.getElementById('ad-left').innerHTML =
+                            `<img src="${leftImg.imageUrl}" class="ad-img" alt="Ad">`;
+                        document.getElementById('ad-right').innerHTML =
+                            `<img src="${rightImg.imageUrl}" class="ad-img" alt="Ad">`;
+                    } catch (e) {
+                        document.getElementById('ad-left').innerText = "Ad failed to load";
+                        document.getElementById('ad-right').innerText = "Ad failed to load";
+                    }
+                }
+                loadAdImages();
+            </script>
+        }
