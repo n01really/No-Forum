@@ -2,11 +2,26 @@
 @model No_Forum.Pages.ForumsModel
 @{
     ViewData["Title"] = "Alla Forum Pages";
+    var boolProps = new[] { "Political", "NSFW", "Roleplay", "Discussion", "Meme", "Art", "Technology" };
 }
 
 <h2>All Forum Pages</h2>
 
-@if (Model.ForumPages.Count==0)
+<form method="get" class="mb-3">
+    <strong>Filter by tag:</strong>
+    @foreach (var prop in boolProps)
+    {
+        <label class="me-2">
+            <input type="checkbox" name="tags" value="@prop"
+                   @(Model.SelectedTags.Contains(prop) ? "checked" : "") />
+            @prop
+        </label>
+    }
+    <button type="submit" class="btn btn-sm btn-primary ms-2">Apply</button>
+    <a asp-page="./Forums" class="btn btn-sm btn-secondary ms-2">Clear</a>
+</form>
+
+@if (Model.ForumPages.Count == 0)
 {
     <p>No forum pages available.</p>
 }
