@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using No_Forum.Data;
 using No_Forum.Models;
+using No_Forum.Service;
 
 namespace No_Forum.Pages
 {
@@ -14,11 +15,13 @@ namespace No_Forum.Pages
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly PostsApiService _postsApiService;
 
-        public ContentPageModel(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public ContentPageModel(ApplicationDbContext context, UserManager<IdentityUser> userManager, PostsApiService postsApiService)
         {
             _context = context;
             _userManager = userManager;
+            _postsApiService = postsApiService;
         }
         public Forumpages? ForumPage { get; set; }
         public List<Posts> ForumPosts { get; set; } = new();
@@ -34,7 +37,12 @@ namespace No_Forum.Pages
         [BindProperty]
         public int RemoveCommentId { get; set; }
 
-
+        public async Task<IActionResult> OnPostImportAsync(IEnumerable<Posts> posts)
+        {
+            bool success = await _postsApiService.ImportPostsAsync(posts);
+            // Handle result...
+            return Page();
+        }
 
         public void OnGet(int id)
         {

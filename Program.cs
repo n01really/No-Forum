@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using No_Forum.Data;
+using No_Forum.Models;
+using No_Forum.Service;
 
 namespace No_Forum;
 
@@ -21,7 +23,7 @@ public class Program
             .AddRoles<IdentityRole>() 
             .AddEntityFrameworkStores<ApplicationDbContext>();
         builder.Services.AddRazorPages();
-
+        builder.Services.AddHttpClient<PostsApiService>();
         builder.Services.AddHttpClient<ForumApiService>(client =>
         {
             client.BaseAddress = new Uri("https://localhost:7022/swagger/index.html");
@@ -29,6 +31,7 @@ public class Program
 
         builder.Services.AddTransient<IEmailSender, EmailSender>();
 
+        builder.Services.AddHttpClient();
 
         var app = builder.Build();
 
@@ -48,6 +51,7 @@ public class Program
         {
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
             // Create Admin role if it doesn't exist
             if (!await roleManager.RoleExistsAsync("Admin"))
@@ -82,6 +86,19 @@ public class Program
                 {
                     await userManager.AddToRoleAsync(adminUser, "Admin");
                 }
+            }
+            if (!db.Posts.Any())
+            {
+                db.Posts.Add(new Posts
+                {
+                    ForumpageId = 1, // Set to a valid ForumpageId
+                    Text = "Welcome! This is the first post.",
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = null, // Or set to a user ID if you want
+                    ImagePath = null,
+                    Flagged = false
+                });
+                db.SaveChanges();
             }
         }
 
