@@ -41,30 +41,40 @@ namespace No_Forum.Pages
                 return Page();
             }
 
-            // Save file to wwwroot/img
-            var uploadsFolder = Path.Combine(_environment.WebRootPath, "img");
+            // Save file to wwwroot/img/pfp
+            var uploadsFolder = Path.Combine(_environment.WebRootPath, "img", "pfp");
             Directory.CreateDirectory(uploadsFolder);
             var fileName = $"{userId}_{Path.GetFileName(ProfileImage.FileName)}";
-            var filePath = Path.Combine(uploadsFolder, fileName);
 
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            // Get userName from claims
+            var userName = User.Identity?.Name;
+
+            if (string.IsNullOrEmpty(userName))
             {
-                await ProfileImage.CopyToAsync(stream);
+                UploadResult = "User not found.";
+                return Page();
             }
 
             // Save/update PFP in database
             var pfp = _context.PFPs.FirstOrDefault(p => p.UserId == userId);
             if (pfp == null)
             {
-                pfp = new PFP { UserId = userId, ProfilePicturePath = fileName };
+                pfp = new PFP { UserId = userId, UserName = userName, ProfilePicturePath = fileName };
                 _context.PFPs.Add(pfp);
             }
             else
             {
                 pfp.ProfilePicturePath = fileName;
+                pfp.UserName = userName; // Update username in case it changed
                 _context.PFPs.Update(pfp);
             }
             await _context.SaveChangesAsync();
+
+            var filePath = Path.Combine(uploadsFolder, fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await ProfileImage.CopyToAsync(stream);
+            }
 
             UploadResult = "Profile picture uploaded successfully!";
             return Page();

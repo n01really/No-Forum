@@ -52,24 +52,20 @@
     <ul>
         @foreach (var comment in Model.PostComments)
         {
-            var commenter = Model.AllUsers.FirstOrDefault(u => u.UserName == comment.CreatedBy);
-            var commenterId = commenter?.Id;
-            var pfp = commenterId != null
-            ? Model.AllPFPs.FirstOrDefault(p => p.UserId == commenterId && !string.IsNullOrEmpty(p.ProfilePicturePath))
-            : null;
+                    var commenter = Model.AllUsers.FirstOrDefault(u => u.UserName == comment.CreatedBy);
+                    var commenterId = commenter?.Id;
+                    var commenterUserName = comment.CreatedBy;
+                    var pfp = !string.IsNullOrEmpty(commenterUserName)
+                    ? Model.AllPFPs.FirstOrDefault(p => p.UserName == commenterUserName)
+                    : null;
+
 
             var alreadyFriend = commenterId != null && Model.MyFriends.Any(f => f.FriendUserId == commenterId);
             var isSelf = commenterId == currentUserId;
 
             <li>
-                @if (pfp != null && !string.IsNullOrEmpty(pfp.ProfilePicturePath))
-                {
-                    <img src="@Url.Content($"~/img/{pfp.ProfilePicturePath}")" alt="Profile Picture" style="width:32px;height:32px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:8px;" />
-                }
-                else
-                {
-                    <img src="@Url.Content("~/img/default.png")" alt="Profile Picture" style="width:32px;height:32px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:8px;" />
-                }
+                <img src="@Url.Content($"~/img/pfp/{(pfp != null && !string.IsNullOrEmpty(pfp.ProfilePicturePath) ? pfp.ProfilePicturePath : "default.png")}")" alt="Profile Picture" style="width:32px;height:32px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:8px;" />
+
                 <strong>@(comment.CreatedBy ?? "Anonymous")</strong>
                 @if (User.Identity?.IsAuthenticated == true && commenterId != null && !alreadyFriend && !isSelf)
                 {
