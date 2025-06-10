@@ -13,29 +13,36 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
+        // Hämtar anslutningssträng och konfigurerar databascontext för SQL Server
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(connectionString));
         builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+        // Konfigurerar Identity med roller och kräver bekräftade konton
         builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-            .AddRoles<IdentityRole>() 
+            .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
+
+        // Lägger till Razor Pages-stöd
         builder.Services.AddRazorPages();
+
+        // Registrerar HTTP-klienter för externa API-tjänster
         builder.Services.AddHttpClient<PostsApiService>();
         builder.Services.AddHttpClient<ForumApiService>(client =>
         {
             client.BaseAddress = new Uri("https://noapi.azure-api.net");
         });
 
+        // Registrerar e-posttjänst
         builder.Services.AddTransient<IEmailSender, EmailSender>();
 
+        // Lägger till generell HTTP-klient
         builder.Services.AddHttpClient();
 
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
+        // Konfigurerar HTTP-pipelinen beroende på miljö (utveckling/produktion)
         if (app.Environment.IsDevelopment())
         {
             app.UseMigrationsEndPoint();
@@ -43,36 +50,36 @@ public class Program
         else
         {
             app.UseExceptionHandler("/Error");
-            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
 
+        // Skapar scope för att hantera roller, användare och seed-data
         using (var scope = app.Services.CreateScope())
         {
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
             var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-            // Create Admin role if it doesn't exist
+            // Skapar Admin-roll om den inte finns
             if (!await roleManager.RoleExistsAsync("Admin"))
             {
                 await roleManager.CreateAsync(new IdentityRole("Admin"));
             }
 
-            // Create an admin user if it doesn't exist
+            // Skapar admin-användare om den inte finns och lägger till i Admin-roll
             var adminEmail = "n01reallyplays@gmail.com";
             var adminUser = await userManager.FindByEmailAsync(adminEmail);
             if (adminUser == null)
             {
                 adminUser = new IdentityUser { UserName = adminEmail, Email = adminEmail, EmailConfirmed = true };
-                var createResult = await userManager.CreateAsync(adminUser, "0104134697Rich!"); // Use a strong password
+                var createResult = await userManager.CreateAsync(adminUser, "0104134697Rich!"); // Använd starkt lösenord
                 if (createResult.Succeeded)
                 {
                     await userManager.AddToRoleAsync(adminUser, "Admin");
                 }
                 else
                 {
-                    // Optional: log errors for debugging
+                    // Loggar eventuella fel vid skapande av admin-användare
                     foreach (var error in createResult.Errors)
                     {
                         Console.WriteLine($"Error creating admin user: {error.Description}");
@@ -81,20 +88,22 @@ public class Program
             }
             else
             {
-                // User exists, ensure they are in the Admin role
+                // Säkerställer att användaren är i Admin-roll
                 if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
                 {
                     await userManager.AddToRoleAsync(adminUser, "Admin");
                 }
             }
+
+            // Lägger till ett första inlägg om databasen är tom
             if (!db.Posts.Any())
             {
                 db.Posts.Add(new Posts
                 {
-                    ForumpageId = 1, // Set to a valid ForumpageId
+                    ForumpageId = 1, // Ange giltigt ForumpageId
                     Text = "Welcome! This is the first post.",
                     CreatedAt = DateTime.UtcNow,
-                    CreatedBy = null, // Or set to a user ID if you want
+                    CreatedBy = null,
                     ImagePath = null,
                     Flagged = false
                 });
@@ -102,7 +111,7 @@ public class Program
             }
         }
 
-
+        // Aktiverar HTTPS, statiska filer, routing och authorization
         app.UseHttpsRedirection();
         app.UseStaticFiles();
 
@@ -110,8 +119,10 @@ public class Program
 
         app.UseAuthorization();
 
+        // Mappar Razor Pages endpoints
         app.MapRazorPages();
 
+        // Startar applikationen
         app.Run();
     }
 }
