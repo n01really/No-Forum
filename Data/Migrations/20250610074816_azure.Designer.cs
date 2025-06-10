@@ -12,8 +12,8 @@ using No_Forum.Data;
 namespace No_Forum.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250528071312_addmessage")]
-    partial class addmessage
+    [Migration("20250610074816_azure")]
+    partial class azure
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -241,6 +241,9 @@ namespace No_Forum.Data.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("Flagged")
+                        .HasColumnType("bit");
+
                     b.Property<int>("ForumpageId")
                         .HasColumnType("int");
 
@@ -270,11 +273,13 @@ namespace No_Forum.Data.Migrations
                     b.Property<string>("Message")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ReciverId")
-                        .HasColumnType("int");
+                    b.Property<string>("ReciverId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SenderId")
-                        .HasColumnType("int");
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SenderName")
                         .HasColumnType("nvarchar(max)");
@@ -335,6 +340,55 @@ namespace No_Forum.Data.Migrations
                     b.ToTable("Forumpages");
                 });
 
+            modelBuilder.Entity("No_Forum.Models.Friends", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FriendUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Friends");
+                });
+
+            modelBuilder.Entity("No_Forum.Models.PFP", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ProfilePicturePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PFPs");
+                });
+
             modelBuilder.Entity("No_Forum.Models.Posts", b =>
                 {
                     b.Property<int>("Id")
@@ -348,6 +402,9 @@ namespace No_Forum.Data.Migrations
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Flagged")
+                        .HasColumnType("bit");
 
                     b.Property<int>("ForumpageId")
                         .HasColumnType("int");

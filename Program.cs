@@ -26,7 +26,7 @@ public class Program
         builder.Services.AddHttpClient<PostsApiService>();
         builder.Services.AddHttpClient<ForumApiService>(client =>
         {
-            client.BaseAddress = new Uri("https://localhost:7022/swagger/index.html");
+            client.BaseAddress = new Uri("https://noapi.azure-api.net");
         });
 
         builder.Services.AddTransient<IEmailSender, EmailSender>();

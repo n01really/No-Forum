@@ -102,28 +102,29 @@ else
     </div>
     <div class="ad-side" id="ad-right"></div>
 </div>
-        @section Scripts {
-            <script>
-                async function loadAdImages() {
-                    const apiUrl = 'https://localhost:7022/api/Images/random';
-                    try {
-                        const [leftRes, rightRes] = await Promise.all([
-                            fetch(apiUrl),
-                            fetch(apiUrl)
-                        ]);
-                        // Parse as JSON, not text
-                        const leftImg = await leftRes.json();
-                        const rightImg = await rightRes.json();
+@section Scripts {
+    <script>
+        async function loadAdImages() {
+            // Use the Azure API Management link for better security and control
+                    const apiUrl = 'https://noapi.azure-api.net/api/Images/random';
+            try {
+                const [leftRes, rightRes] = await Promise.all([
+                    fetch(apiUrl),
+                    fetch(apiUrl)
+                ]);
+                // Parse as JSON, not text
+                const leftImg = await leftRes.json();
+                const rightImg = await rightRes.json();
 
-                        document.getElementById('ad-left').innerHTML =
-                            `<img src="${leftImg.imageUrl}" class="ad-img" alt="Ad">`;
-                        document.getElementById('ad-right').innerHTML =
-                            `<img src="${rightImg.imageUrl}" class="ad-img" alt="Ad">`;
-                    } catch (e) {
-                        document.getElementById('ad-left').innerText = "Ad failed to load";
-                        document.getElementById('ad-right').innerText = "Ad failed to load";
-                    }
-                }
-                loadAdImages();
-            </script>
+                document.getElementById('ad-left').innerHTML =
+                    `<img src="${leftImg.imageUrl}" class="ad-img" alt="Ad">`;
+                document.getElementById('ad-right').innerHTML =
+                    `<img src="${rightImg.imageUrl}" class="ad-img" alt="Ad">`;
+            } catch (e) {
+                document.getElementById('ad-left').innerText = "Ad failed to load";
+                document.getElementById('ad-right').innerText = "Ad failed to load";
+            }
         }
+        loadAdImages();
+    </script>
+}

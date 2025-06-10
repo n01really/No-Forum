@@ -16,7 +16,7 @@ namespace No_Forum.Service
 
         public async Task<bool> ImportPostsAsync(IEnumerable<Posts> posts)
         {
-            var response = await _httpClient.PostAsJsonAsync("https://localhost:7022/Posts", posts);
+            var response = await _httpClient.PostAsJsonAsync("https://noapi.azure-api.net/Posts", posts);
             return response.IsSuccessStatusCode;
         }
     }
