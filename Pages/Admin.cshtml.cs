@@ -8,26 +8,38 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace No_Forum.Pages
 {
+    // Restricts access to users in the "Admin" role
     [Authorize(Roles = "Admin")]
     public class AdminModel : PageModel
     {
+        // Provides user management functionality
         private readonly UserManager<IdentityUser> _userManager;
 
+        // Constructor injects UserManager for user operations
         public AdminModel(UserManager<IdentityUser> userManager)
         {
             _userManager = userManager;
         }
 
+        // List of all users except the current admin
         public List<IdentityUser> Users { get; set; } = new();
+
+        // Stores lockout status for each user
         public Dictionary<string, bool> UserLockoutStatus { get; set; } = new();
 
+        // Bound property for the user ID to ban
         [BindProperty]
         public string BanUserId { get; set; }
+
+        // Bound property for the user ID to unban
         [BindProperty]
         public string UnbanUserId { get; set; }
+
+        // Bound property for the user ID to remove
         [BindProperty]
         public string RemoveUserId { get; set; }
 
+        // Loads users and their lockout status, excluding the current admin
         public async Task OnGetAsync()
         {
             var currentUser = await _userManager.GetUserAsync(User);
@@ -41,6 +53,7 @@ namespace No_Forum.Pages
             }
         }
 
+        // Bans a user by enabling lockout and setting lockout end date to max
         public async Task<IActionResult> OnPostBanAsync()
         {
             var user = await _userManager.FindByIdAsync(BanUserId);
@@ -52,6 +65,7 @@ namespace No_Forum.Pages
             return RedirectToPage();
         }
 
+        // Unbans a user by clearing their lockout end date
         public async Task<IActionResult> OnPostUnbanAsync()
         {
             var user = await _userManager.FindByIdAsync(UnbanUserId);
@@ -62,6 +76,7 @@ namespace No_Forum.Pages
             return RedirectToPage();
         }
 
+        // Removes a user from the system
         public async Task<IActionResult> OnPostRemoveAsync()
         {
             var user = await _userManager.FindByIdAsync(RemoveUserId);
