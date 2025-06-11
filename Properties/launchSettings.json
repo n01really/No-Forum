@@ -34,5 +34,15 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
+  },
+
+  "profiles": {
+    "No_Forum": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
   }
 }

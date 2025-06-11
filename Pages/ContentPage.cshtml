@@ -68,7 +68,9 @@ else
     <p>No posts yet.</p>
     @foreach (var post in Model.ForumPosts)
     {
-        var user = Model.PostAuthors.ContainsKey(post.CreatedBy) ? Model.PostAuthors[post.CreatedBy] : null;
+        
+          var user = Model.PostAuthors.ContainsKey(post.CreatedBy) ? Model.PostAuthors[post.CreatedBy] : null;
+
         <li class="list-group-item mb-2">
             <div>
                 <strong>@(user?.UserName ?? "Anonymous")</strong>
@@ -105,7 +107,12 @@ else
         {
             <li class="list-group-item mb-2">
                 <div>
-                    <strong>@(post.CreatedBy ?? "Anonymous")</strong>
+                            @{
+                                var user = !string.IsNullOrEmpty(post.CreatedBy) && Model.PostAuthors.ContainsKey(post.CreatedBy)
+                                ? Model.PostAuthors[post.CreatedBy]
+                                : null;
+                            }
+                            <strong>@(user?.UserName ?? "Anonymous")</strong>
                     @if (!string.IsNullOrEmpty(post.CreatedBy) && post.CreatedBy != User.Identity?.Name)
                     {
                         <a asp-page="/Send" asp-route-reciverId="@post.CreatedBy" class="btn btn-primary mt-3">Send DM</a>
