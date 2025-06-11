@@ -59,7 +59,7 @@ namespace No_Forum.Pages
             comment.Flagged = !comment.Flagged; // Växla flaggad-status
             await _context.SaveChangesAsync();
 
-            return RedirectToPage(new { id = Post?.Id });
+            return RedirectToPage(new { id = Id }); // Använd bindade Id, inte Post?.Id
         }
 
         // GET: Ladda inlägg, kommentarer, användare, vänner och profilbilder

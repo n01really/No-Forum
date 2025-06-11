@@ -20,7 +20,7 @@ namespace No_Forum.Service
         public async Task<bool> ImportPostsAsync(IEnumerable<Posts> posts)
         {
             // Sends a POST request with the posts as JSON to the specified API endpoint
-            var response = await _httpClient.PostAsJsonAsync("https://noapi.azure-api.net/Posts", posts);
+            var response = await _httpClient.PostAsJsonAsync("https://noapi.azure-api.net/Posts/import-from-website-db", posts);
             // Returns true if the request was successful
             return response.IsSuccessStatusCode;
         }

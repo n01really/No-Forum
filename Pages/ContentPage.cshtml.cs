@@ -83,9 +83,13 @@ namespace No_Forum.Pages
             post.Flagged = !post.Flagged;
             await _context.SaveChangesAsync();
 
-            return RedirectToPage(new { id = ForumId });
-        }
+            // Ladda om data som behövs för sidan (om det behövs)
+            ForumId = post.ForumpageId;
+            ForumPage = _context.Forumpages.FirstOrDefault(f => f.Id == ForumId);
+            ForumPosts = _context.Posts.Where(p => p.ForumpageId == ForumId).ToList();
 
+            return Page(); // Stannar kvar på samma sida
+        }
         // Hanterar nytt inlägg (text och/eller bild)
         public async Task<IActionResult> OnPostAsync(int id)
         {
